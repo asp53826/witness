@@ -1,6 +1,6 @@
 import type { CapsuleId, RunResult } from '../types'
 
-type PythonCapsule = Extract<CapsuleId, 'autonomy' | 'quant'>
+type PythonCapsule = Extract<CapsuleId, 'autonomy' | 'quant' | 'imaging' | 'navigation' | 'numerical'>
 interface WorkerMessage { id: number; type: 'progress' | 'result' | 'error'; message?: string; result?: RunResult }
 
 let worker: Worker | null = null

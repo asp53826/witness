@@ -12,8 +12,12 @@ WITNESS is a live reproducibility chamber for engineering claims. It verifies a 
 | ML compiler | TypeScript | `tensorforge-webgpu@70a5c85` | incompatible matrix dimensions are rejected before GPU dispatch |
 | Autonomy | Python, NumPy, and SciPy in a Pyodide Worker | `track-fusion@9a1092b` | target-free clutter produces at most four confirmations |
 | Quant | Python in a Pyodide Worker | `lob-market-making@82c75a1` | inventory skew reduces inventory dispersion and both P&L ledgers reconcile |
+| Vector search | C++17 compiled to WebAssembly | `annlite@dc922c8` | increasing `efSearch` recovers exact-ground-truth neighbors at measurable work cost |
+| SAR imaging | Python and NumPy in a Pyodide Worker | `sar-focus@8304157` | entropy improves while azimuth impulse-response width gets worse |
+| Navigation | Python and NumPy in a Pyodide Worker | `vio-nav@f38714f` | stationary-camera features are rejected for missing parallax |
+| Numerical finance | Python and NumPy in a Pyodide Worker | `aad-greeks@c26ef7a` | analytic, bumped, and smoothed deltas expose pathwise AAD's false zero |
 
-The Python worker accepts only these four hard-coded scenarios. It does not evaluate visitor-supplied code. Exact source and artifact hashes are recorded in [`public/source-manifest.json`](public/source-manifest.json).
+The Python worker accepts only the five hard-coded Python scenarios listed above. It does not evaluate visitor-supplied code. Exact source and artifact hashes are recorded in [`public/source-manifest.json`](public/source-manifest.json).
 
 ## Integrity boundary
 
@@ -29,13 +33,17 @@ npm run check
 npm run dev
 ```
 
-The check suite validates all four receipt digests, the TensorForge oracle, the actual WebAssembly Raft scenario, lint, TypeScript, and the production build.
+The check suite validates all eight receipt digests, the TensorForge oracle, both C++ WebAssembly scenarios, lint, TypeScript, and the production build.
 
 ## Honest scope
 
 - These are focused deterministic counterexamples, not full benchmark suites.
 - The autonomy run uses a simulation likelihood model, not calibrated production sensor data.
 - The quant run is a paired 4,000-step targeted test, not the published twelve-seed 20,000-step benchmark.
+- The ANN run is a deterministic targeted graph/query set, not the repository's published SIFT1M throughput benchmark.
+- The SAR run is a simulated stripmap point-target scene. It reproduces the pinned metric conflict, not flight-data image quality.
+- The VIO run is the pinned eight-second synthetic hover test. It demonstrates an observability guard, not field navigation accuracy.
+- The AAD run is a seeded 200,000-path digital-payoff test. It is not a production pricing or risk recommendation.
 - Pyodide cold-starts may take several seconds because scientific Python wheels are loaded in a Worker.
 
 ## License

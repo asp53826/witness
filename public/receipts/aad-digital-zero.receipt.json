@@ -1,0 +1,114 @@
+{
+  "format": "counterexample-receipt/v1",
+  "issuedAt": "2026-08-10T00:00:00Z",
+  "issuer": {
+    "name": "COUNTEREXAMPLE",
+    "repository": "asp53826/counterexample",
+    "release": "v1.0.0"
+  },
+  "subject": {
+    "id": "aad-digital-zero",
+    "caseNumber": "CX-007",
+    "title": "Automatic differentiation is confidently wrong",
+    "repository": "asp53826/aad-greeks",
+    "commit": "c26ef7aa18f473b7cfd85642a62aef3a17b94c58"
+  },
+  "capsule": {
+    "$schema": "../schemas/counterexample.schema.json",
+    "schemaVersion": 1,
+    "id": "aad-digital-zero",
+    "caseNumber": "CX-007",
+    "title": "Automatic differentiation is confidently wrong",
+    "system": "Adjoint differentiation",
+    "engine": "aad-greeks",
+    "commit": "c26ef7aa18f473b7cfd85642a62aef3a17b94c58",
+    "disposition": "bounded",
+    "severity": "critical",
+    "verifiedAt": "2026-08-10",
+    "faultKind": "nondifferentiable-payoff",
+    "invariantId": "derivative-matches-payoff",
+    "summary": "Pathwise AAD differentiates a cash-or-nothing digital payoff to exactly zero almost everywhere and emits no error, even though the analytic delta is material.",
+    "trigger": "Differentiate a sharp at-the-money digital call pathwise using the same Monte Carlo normals as the price estimator.",
+    "observed": "AAD returns 0.000000 against a true delta of 0.019333, while a crude central difference is correct within 0.1 percent.",
+    "invariant": "A derivative method must match the regularity of the payoff; a finite price does not imply a valid pathwise derivative.",
+    "fix": "Replace the step with a call-spread smoothing choice, then report the bias-versus-variance trade instead of calling smoothing exact.",
+    "verification": {
+      "commandId": "digital-test",
+      "testPath": "tests/test_greeks.py",
+      "testLines": [
+        169,
+        205
+      ],
+      "result": "2 tests passed",
+      "benchmarkPath": "README.md",
+      "benchmarkLines": [
+        116,
+        149
+      ]
+    },
+    "metrics": [
+      {
+        "label": "sharp pathwise delta",
+        "broken": "0.000000",
+        "guarded": "0.019333 true",
+        "unit": "delta"
+      },
+      {
+        "label": "smoothed AAD delta",
+        "broken": "100% err",
+        "guarded": "0.019341",
+        "unit": "delta"
+      }
+    ],
+    "timeline": [
+      {
+        "phase": "trigger",
+        "title": "Differentiate the step",
+        "detail": "Every sampled payoff follows a locally flat branch except on a measure-zero strike boundary.",
+        "state": "neutral"
+      },
+      {
+        "phase": "propagate",
+        "title": "Reverse-sweep zero",
+        "detail": "The tape behaves exactly as implemented and propagates a zero adjoint without a warning.",
+        "state": "fail"
+      },
+      {
+        "phase": "witness",
+        "title": "Compare with the analytic Greek",
+        "detail": "The test proves the true delta exceeds 0.015 and central difference recovers it.",
+        "state": "inspect"
+      },
+      {
+        "phase": "guard",
+        "title": "Choose smoothing explicitly",
+        "detail": "A width-one call spread recovers the delta within five percent while exposing the modeling choice.",
+        "state": "pass"
+      }
+    ],
+    "limits": [
+      "Smoothing introduces bias and is a modeling choice, not a universal repair for discontinuous payoffs."
+    ],
+    "tags": [
+      "aad",
+      "greeks",
+      "digital-option",
+      "nondifferentiable"
+    ]
+  },
+  "verification": {
+    "commandId": "digital-test",
+    "command": ".venv/bin/pytest -q tests/test_greeks.py::test_pathwise_aad_reports_zero_delta_for_a_digital tests/test_greeks.py::test_smoothing_recovers_the_digital_delta",
+    "expected": "2 passed",
+    "observed": "2 tests passed",
+    "test": "https://github.com/asp53826/aad-greeks/blob/c26ef7aa18f473b7cfd85642a62aef3a17b94c58/tests/test_greeks.py#L169-L205",
+    "benchmark": "https://github.com/asp53826/aad-greeks/blob/c26ef7aa18f473b7cfd85642a62aef3a17b94c58/README.md#L116-L149"
+  },
+  "integrity": {
+    "capsuleSha256": "82e174f3ba0757f245014f221127114f60dc27a72c255381e27f9714006ffeea",
+    "releaseBundle": "counterexample-v1.0.0-receipts.tar.gz",
+    "verifyReceipt": "node bin/counterexample.mjs verify receipts/aad-digital-zero.receipt.json",
+    "verifyAttestation": "gh attestation verify counterexample-v1.0.0-receipts.tar.gz --repo asp53826/counterexample"
+  },
+  "receiptSha256": "d2d00e9583dfd3f7e7674985b8955cda352818e4a068299749e95cb97e75e4a3"
+}

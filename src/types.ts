@@ -1,4 +1,4 @@
-export type CapsuleId = 'systems' | 'ml' | 'autonomy' | 'quant'
+export type CapsuleId = 'systems' | 'ml' | 'autonomy' | 'quant' | 'search' | 'imaging' | 'navigation' | 'numerical'
 
 export type RunStatus = 'idle' | 'verifying' | 'loading' | 'running' | 'passed' | 'failed' | 'error'
 

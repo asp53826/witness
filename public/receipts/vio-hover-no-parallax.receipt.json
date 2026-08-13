@@ -1,0 +1,114 @@
+{
+  "format": "counterexample-receipt/v1",
+  "issuedAt": "2026-08-10T00:00:00Z",
+  "issuer": {
+    "name": "COUNTEREXAMPLE",
+    "repository": "asp53826/counterexample",
+    "release": "v1.0.0"
+  },
+  "subject": {
+    "id": "vio-hover-no-parallax",
+    "caseNumber": "CX-006",
+    "title": "A stationary camera invents depth from no baseline",
+    "repository": "asp53826/vio-nav",
+    "commit": "f38714f391ffb0dc3ae06b418aae51f929000e1e"
+  },
+  "capsule": {
+    "$schema": "../schemas/counterexample.schema.json",
+    "schemaVersion": 1,
+    "id": "vio-hover-no-parallax",
+    "caseNumber": "CX-006",
+    "title": "A stationary camera invents depth from no baseline",
+    "system": "Visual-inertial odometry",
+    "engine": "vio-nav",
+    "commit": "f38714f391ffb0dc3ae06b418aae51f929000e1e",
+    "disposition": "bounded",
+    "severity": "high",
+    "verifiedAt": "2026-08-10",
+    "faultKind": "no-parallax",
+    "invariantId": "translation-before-depth",
+    "summary": "During hover, repeated camera bearings contain no translation baseline for triangulation. MSCKF position error becomes thirteen times worse than dead reckoning.",
+    "trigger": "Hold the platform in hover while continuing to feed image bearings and inertial measurements to the estimator.",
+    "observed": "MSCKF reaches 1.202 m error versus 0.094 m dead reckoning and rejects 12,086 features for parallax or triangulation failure.",
+    "invariant": "A feature may constrain position only when the observing camera poses provide enough translational parallax for stable depth.",
+    "fix": "Reject underconstrained features, expose the observability loss, and require a motion plan that excites translation before claiming VIO improvement.",
+    "verification": {
+      "commandId": "hover-test",
+      "testPath": "tests/test_filter.py",
+      "testLines": [
+        166,
+        175
+      ],
+      "result": "1 test passed",
+      "benchmarkPath": "README.md",
+      "benchmarkLines": [
+        52,
+        72
+      ]
+    },
+    "metrics": [
+      {
+        "label": "position error",
+        "broken": "1.202",
+        "guarded": "0.094 DR",
+        "unit": "m"
+      },
+      {
+        "label": "features rejected",
+        "broken": "12,086",
+        "guarded": "4 moving",
+        "unit": "features"
+      }
+    ],
+    "timeline": [
+      {
+        "phase": "trigger",
+        "title": "Freeze translation",
+        "detail": "The camera rotates negligibly and observes the scene repeatedly from the same position.",
+        "state": "neutral"
+      },
+      {
+        "phase": "propagate",
+        "title": "Lose depth observability",
+        "detail": "Bearing rays do not intersect with a useful baseline; triangulation becomes ill-conditioned.",
+        "state": "fail"
+      },
+      {
+        "phase": "witness",
+        "title": "Reject twelve thousand features",
+        "detail": "The benchmark records the rejected geometry and the resulting position error.",
+        "state": "inspect"
+      },
+      {
+        "phase": "boundary",
+        "title": "Make motion part of the contract",
+        "detail": "The lab refuses to generalize figure-eight accuracy to hover.",
+        "state": "pass"
+      }
+    ],
+    "limits": [
+      "The benchmark uses synthetic feature tracks; a real front end adds correspondence and calibration failures."
+    ],
+    "tags": [
+      "vio",
+      "observability",
+      "parallax",
+      "navigation"
+    ]
+  },
+  "verification": {
+    "commandId": "hover-test",
+    "command": "PYTHONPATH=. .venv/bin/pytest -q tests/test_filter.py::test_hovering_gives_the_camera_nothing_to_work_with",
+    "expected": "1 passed",
+    "observed": "1 test passed",
+    "test": "https://github.com/asp53826/vio-nav/blob/f38714f391ffb0dc3ae06b418aae51f929000e1e/tests/test_filter.py#L166-L175",
+    "benchmark": "https://github.com/asp53826/vio-nav/blob/f38714f391ffb0dc3ae06b418aae51f929000e1e/README.md#L52-L72"
+  },
+  "integrity": {
+    "capsuleSha256": "53845e8981cdc306069109445d2ebcbacfd297356898269f4f3cca1e6378105f",
+    "releaseBundle": "counterexample-v1.0.0-receipts.tar.gz",
+    "verifyReceipt": "node bin/counterexample.mjs verify receipts/vio-hover-no-parallax.receipt.json",
+    "verifyAttestation": "gh attestation verify counterexample-v1.0.0-receipts.tar.gz --repo asp53826/counterexample"
+  },
+  "receiptSha256": "be84bcd3f1737f84f292a0169384b6701f537613a847621b19bf55d887a9f37e"
+}

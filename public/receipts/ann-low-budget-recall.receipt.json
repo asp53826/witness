@@ -1,0 +1,114 @@
+{
+  "format": "counterexample-receipt/v1",
+  "issuedAt": "2026-08-10T00:00:00Z",
+  "issuer": {
+    "name": "COUNTEREXAMPLE",
+    "repository": "asp53826/counterexample",
+    "release": "v1.0.0"
+  },
+  "subject": {
+    "id": "ann-low-budget-recall",
+    "caseNumber": "CX-010",
+    "title": "A fast vector search silently leaves neighbors behind",
+    "repository": "asp53826/annlite",
+    "commit": "dc922c8c1816df48d75f2a16e51cd25819aab070"
+  },
+  "capsule": {
+    "$schema": "../schemas/counterexample.schema.json",
+    "schemaVersion": 1,
+    "id": "ann-low-budget-recall",
+    "caseNumber": "CX-010",
+    "title": "A fast vector search silently leaves neighbors behind",
+    "system": "Approximate nearest neighbors",
+    "engine": "annlite",
+    "commit": "dc922c8c1816df48d75f2a16e51cd25819aab070",
+    "disposition": "bounded",
+    "severity": "high",
+    "verifiedAt": "2026-08-10",
+    "faultKind": "low-search-budget",
+    "invariantId": "latency-reports-recall",
+    "summary": "At efSearch 10, HNSW appears extremely fast but recall@10 is only 0.949. Reporting QPS alone turns missing neighbors into invisible success.",
+    "trigger": "Search 10,000 SIFT-128 vectors with a deliberately narrow candidate frontier and compare against exact brute-force ground truth.",
+    "observed": "The index reaches 105,741 QPS at 0.949 recall; increasing efSearch to 32 lowers QPS to 45,149 and raises recall to 0.997.",
+    "invariant": "Approximate-search latency is interpretable only beside exact-ground-truth recall at the same k and dataset.",
+    "fix": "Publish the full recall-latency frontier, test monotonic recall under increasing efSearch, and select budgets from target recall.",
+    "verification": {
+      "commandId": "recall-test",
+      "testPath": "tests/test_index.py",
+      "testLines": [
+        77,
+        112
+      ],
+      "result": "4 tests passed",
+      "benchmarkPath": "README.md",
+      "benchmarkLines": [
+        20,
+        57
+      ]
+    },
+    "metrics": [
+      {
+        "label": "recall at ef 10",
+        "broken": "0.949",
+        "guarded": "reported",
+        "unit": "recall@10"
+      },
+      {
+        "label": "recall at ef 32",
+        "broken": "45,149 QPS",
+        "guarded": "0.997",
+        "unit": "recall@10"
+      }
+    ],
+    "timeline": [
+      {
+        "phase": "trigger",
+        "title": "Narrow the candidate frontier",
+        "detail": "efSearch 10 explores very few graph nodes and minimizes work per query.",
+        "state": "neutral"
+      },
+      {
+        "phase": "propagate",
+        "title": "Win the latency chart",
+        "detail": "Throughput rises while approximately five percent of the true neighbors disappear.",
+        "state": "fail"
+      },
+      {
+        "phase": "witness",
+        "title": "Ask exact search",
+        "detail": "Brute-force labels expose every omitted neighbor and produce recall@10.",
+        "state": "inspect"
+      },
+      {
+        "phase": "boundary",
+        "title": "Publish the Pareto curve",
+        "detail": "No QPS claim is accepted without its recall operating point.",
+        "state": "pass"
+      }
+    ],
+    "limits": [
+      "The published absolute QPS uses 10,000 in-memory vectors on an M-series CPU, not a million-vector production index."
+    ],
+    "tags": [
+      "hnsw",
+      "vector-search",
+      "recall",
+      "latency"
+    ]
+  },
+  "verification": {
+    "commandId": "recall-test",
+    "command": ".venv/bin/pytest -q tests/test_index.py::test_recall_against_exact_brute_force tests/test_index.py::test_higher_ef_never_hurts_recall",
+    "expected": "4 passed",
+    "observed": "4 tests passed",
+    "test": "https://github.com/asp53826/annlite/blob/dc922c8c1816df48d75f2a16e51cd25819aab070/tests/test_index.py#L77-L112",
+    "benchmark": "https://github.com/asp53826/annlite/blob/dc922c8c1816df48d75f2a16e51cd25819aab070/README.md#L20-L57"
+  },
+  "integrity": {
+    "capsuleSha256": "04e748c7f738733b3db53fc4ff84bf3041880296d352dfe373f9080008df26a0",
+    "releaseBundle": "counterexample-v1.0.0-receipts.tar.gz",
+    "verifyReceipt": "node bin/counterexample.mjs verify receipts/ann-low-budget-recall.receipt.json",
+    "verifyAttestation": "gh attestation verify counterexample-v1.0.0-receipts.tar.gz --repo asp53826/counterexample"
+  },
+  "receiptSha256": "cffc4aa733f3c13b314b666c99304a9fea583558322ed829e6aa83a7f118bf4a"
+}

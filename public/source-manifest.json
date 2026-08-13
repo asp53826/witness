@@ -28,6 +28,35 @@
       "repository": "asp53826/lob-market-making",
       "commit": "82c75a1fd7824dd96bdb92432b58b3557cb7d577",
       "sourceTreeSha256": "c4654af97515fdf38d1a85ce19d9b488a7f237506201dfa4090e65fecc29fa01"
+    },
+    {
+      "repository": "asp53826/annlite",
+      "commit": "dc922c8c1816df48d75f2a16e51cd25819aab070",
+      "sourceArtifacts": {
+        "native/annlite/include/annlite/distance.hpp": "783e283ba1b8089786f5e0485e9b0a11dfba2f1ef50d7a8cdaa8f9b9a538dfd9",
+        "native/annlite/include/annlite/hnsw.hpp": "1f12333718bbfe1309d731bb0fc8de92f8d543e241d7d3cf44485a52ea98b8ea",
+        "native/annlite/src/hnsw.cpp": "2cb720751637fb926a25a8adaef98a6649bb1acd8fc696db91571a7096dadcec"
+      },
+      "witnessHarnessSha256": "af480a677a487183e12ca33beae175cef500859121c5b4b2bcf4e643a6ed08a0",
+      "artifacts": {
+        "wasm/annlite-engine.mjs": "60e5683fdcb53a1ff08c158a5b8477273c3ddc9a28a983b7a47f3f99eb1ad0bb",
+        "wasm/annlite-engine.wasm": "de31ecbe6420956e8f130501d88d9fcb08e4773ff7a95733eab1fff0e299f3bb"
+      }
+    },
+    {
+      "repository": "asp53826/sar-focus",
+      "commit": "83041573ebcfa935640f91cb091e1dbaad4f9aaa",
+      "sourceTreeSha256": "72cba8c35db2e40dd2a2822961a6d9fa3f0155dccb8a42e07d1c7f80fda0582c"
+    },
+    {
+      "repository": "asp53826/vio-nav",
+      "commit": "f38714f391ffb0dc3ae06b418aae51f929000e1e",
+      "sourceTreeSha256": "66f5cb83eb6b21dcf4630a78c95d7a2bec27233f2b5f0fff41321dd38c315ad8"
+    },
+    {
+      "repository": "asp53826/aad-greeks",
+      "commit": "c26ef7aa18f473b7cfd85642a62aef3a17b94c58",
+      "sourceTreeSha256": "b1febfe3c3e741462ecc21a1b4c156f1db32e4a3d6f48298df9f4ca03a6e4f17"
     }
   ]
 }

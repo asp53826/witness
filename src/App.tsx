@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import './App.css'
+import { runAnnlite } from './engines/annlite'
 import { runFaultline } from './engines/faultline'
 import { runPythonCapsule } from './engines/pythonClient'
 import { runTensorForge } from './engines/tensor'
@@ -54,6 +55,7 @@ function App() {
       let observed: RunResult
       if (selected === 'systems') observed = await runFaultline()
       else if (selected === 'ml') observed = await runTensorForge()
+      else if (selected === 'search') observed = await runAnnlite()
       else observed = await runPythonCapsule(selected, (message) => { setStatus(message.includes('Executing') ? 'running' : 'loading'); setProgress(message) })
       const effective = invertOracle ? { ...observed, passed: !observed.passed, summary: 'Engine output is unchanged, but the inverted oracle makes the proof comparison fail.' } : observed
       const unsigned = {
@@ -83,7 +85,7 @@ function App() {
     <a className="skip-link" href="#reproducibility-chamber">SKIP TO CHAMBER</a>
     <header className="topbar">
       <a className="wordmark" href="./" aria-label="WITNESS home"><span className="wordmark-mark">W</span><span>WITNESS</span><small>LIVE REPRODUCIBILITY CHAMBER</small></a>
-      <div className="topbar-status"><span className={`status-lamp ${status}`} aria-hidden="true"/><span>{statusLabel[status]}</span><span className="build-id">BUILD / 01</span></div>
+      <div className="topbar-status"><span className={`status-lamp ${status}`} aria-hidden="true"/><span>{statusLabel[status]}</span><span className="build-id">BUILD / 02</span></div>
       <nav aria-label="Project links">
         <a href="https://asp53826.github.io/proofgraph/">PROOFGRAPH <ArrowIcon /></a>
         <a href="https://github.com/asp53826/witness">SOURCE <ArrowIcon /></a>
@@ -92,10 +94,13 @@ function App() {
 
     <main className="lab-grid" id="reproducibility-chamber">
       <aside className="capsule-rack" aria-label="Reproducibility capsules">
-        <div className="rack-heading"><span>CAPSULE RACK</span><strong>04 / ONLINE</strong></div>
-        {capsules.map((item) => <button key={item.id} className={`capsule-slot ${selected === item.id ? 'active' : ''}`} onClick={() => chooseCapsule(item.id)} disabled={busy} aria-pressed={selected === item.id}>
-          <span className="slot-index">{item.index}</span><span className="slot-copy"><b>{item.label}</b><small>{item.system}</small></span><span className="slot-led" aria-hidden="true" />
-        </button>)}
+        <div className="rack-heading"><span>CAPSULE RACK</span><strong>08 / ONLINE</strong></div>
+        {[capsules.slice(0, 4), capsules.slice(4)].map((bank, bankIndex) => <div className="rack-bank" key={bankIndex}>
+          <div className="rack-bank-title"><span>BANK {bankIndex === 0 ? 'A' : 'B'}</span><i>{bankIndex === 0 ? 'FOUNDATION' : 'EXTENDED PROOFS'}</i></div>
+          {bank.map((item) => <button key={item.id} className={`capsule-slot ${selected === item.id ? 'active' : ''}`} onClick={() => chooseCapsule(item.id)} disabled={busy} aria-pressed={selected === item.id}>
+            <span className="slot-index">{item.index}</span><span className="slot-copy"><b>{item.label}</b><small>{item.system}</small></span><span className="slot-led" aria-hidden="true" />
+          </button>)}
+        </div>)}
         <div className="rack-note"><span>RUNTIME POLICY</span><p>No screenshots. No mocked terminals. Every verdict comes from code executing in this page.</p></div>
       </aside>
 
@@ -154,7 +159,7 @@ function App() {
       </aside>
     </main>
 
-    <footer><div><span>WITNESS / OPEN ENGINEERING EVIDENCE</span><b>Four runtimes. Four pinned commits. Zero invented benchmarks.</b></div><div><a href="https://github.com/asp53826/counterexample">COUNTEREXAMPLE</a><a href="https://asp53826.github.io/">PORTFOLIO</a><span>© 2026 AARYAN PATEL</span></div></footer>
+    <footer><div><span>WITNESS / OPEN ENGINEERING EVIDENCE</span><b>Eight capsules. Eight pinned commits. Zero invented benchmarks.</b></div><div><a href="https://github.com/asp53826/counterexample">COUNTEREXAMPLE</a><a href="https://asp53826.github.io/">PORTFOLIO</a><span>© 2026 AARYAN PATEL</span></div></footer>
   </div>
 }
 
