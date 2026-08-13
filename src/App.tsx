@@ -85,8 +85,9 @@ function App() {
     <a className="skip-link" href="#reproducibility-chamber">SKIP TO CHAMBER</a>
     <header className="topbar">
       <a className="wordmark" href="./" aria-label="WITNESS home"><span className="wordmark-mark">W</span><span>WITNESS</span><small>LIVE REPRODUCIBILITY CHAMBER</small></a>
-      <div className="topbar-status"><span className={`status-lamp ${status}`} aria-hidden="true"/><span>{statusLabel[status]}</span><span className="build-id">BUILD / 02</span></div>
+      <div className="topbar-status"><span className={`status-lamp ${status}`} aria-hidden="true"/><span>{statusLabel[status]}</span><span className="build-id">BUILD / 03</span></div>
       <nav aria-label="Project links">
+        <a className="monograph-link" href={`${import.meta.env.BASE_URL}publications/WITNESS-Technical-Monograph.pdf`}>MONOGRAPH <ArrowIcon /></a>
         <a href="https://asp53826.github.io/proofgraph/">PROOFGRAPH <ArrowIcon /></a>
         <a href="https://github.com/asp53826/witness">SOURCE <ArrowIcon /></a>
       </nav>

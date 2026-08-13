@@ -4,6 +4,23 @@ WITNESS is a live reproducibility chamber for engineering claims. It verifies a 
 
 **Live lab:** [asp53826.github.io/witness](https://asp53826.github.io/witness/)
 
+## Technical monograph
+
+**WITNESS: Executable Counterexamples as Evidence for Engineering Claims** is
+a 23-page independent engineering monograph that formalizes the chamber's
+claim → attack → oracle → source → receipt → run model. It includes eleven
+original diagrams, a threat model, eight capsule studies, a reproduction
+protocol, an artifact-evaluation readiness analysis, and an exact identity
+register for every pinned source revision and receipt.
+
+**[Read the designed PDF](https://asp53826.github.io/witness/publications/WITNESS-Technical-Monograph.pdf)** ·
+**[Inspect the GitHub edition](docs/WITNESS-Technical-Monograph.md)** ·
+**[Download the Word edition](docs/WITNESS-Technical-Monograph.docx)** ·
+**[Rebuild the publication](docs/build_monograph.py)**
+
+This is independent technical documentation. It does not claim a degree,
+peer-review status, or independent reproduction.
+
 ## Executable capsules
 
 | Capsule | Runtime in the browser | Pinned subject | Oracle |
