@@ -1,0 +1,114 @@
+{
+  "format": "counterexample-receipt/v1",
+  "issuedAt": "2026-08-10T00:00:00Z",
+  "issuer": {
+    "name": "COUNTEREXAMPLE",
+    "repository": "asp53826/counterexample",
+    "release": "v1.0.0"
+  },
+  "subject": {
+    "id": "lob-profit-hides-risk",
+    "caseNumber": "CX-008",
+    "title": "The highest-PnL strategy is mostly carrying a coin flip",
+    "repository": "asp53826/lob-market-making",
+    "commit": "82c75a1fd7824dd96bdb92432b58b3557cb7d577"
+  },
+  "capsule": {
+    "$schema": "../schemas/counterexample.schema.json",
+    "schemaVersion": 1,
+    "id": "lob-profit-hides-risk",
+    "caseNumber": "CX-008",
+    "title": "The highest-PnL strategy is mostly carrying a coin flip",
+    "system": "Market microstructure",
+    "engine": "lob-market-making",
+    "commit": "82c75a1fd7824dd96bdb92432b58b3557cb7d577",
+    "disposition": "bounded",
+    "severity": "high",
+    "verifiedAt": "2026-08-10",
+    "faultKind": "inventory-drift",
+    "invariantId": "profit-reports-inventory-risk",
+    "summary": "A naive market maker ranks first by mean PnL while carrying seven times the inventory dispersion and 3.5 times the PnL spread of the inventory-skew strategy.",
+    "trigger": "Rank twelve paired 20,000-step simulations by total PnL without decomposing spread capture from inventory drift.",
+    "observed": "Naive quoting earns 20,853 mean PnL with inventory standard deviation 88.1; skew earns 15,448 with inventory standard deviation 12.0.",
+    "invariant": "Every profitability claim must report inventory exposure, uncertainty, volume, toxicity, and an exact PnL decomposition beside the total.",
+    "fix": "Keep paired seeds and rank strategies on a multi-metric ledger; assert that spread capture plus inventory PnL equals total PnL exactly.",
+    "verification": {
+      "commandId": "inventory-test",
+      "testPath": "tests/test_sim.py",
+      "testLines": [
+        92,
+        96
+      ],
+      "result": "1 test passed",
+      "benchmarkPath": "README.md",
+      "benchmarkLines": [
+        52,
+        72
+      ]
+    },
+    "metrics": [
+      {
+        "label": "mean PnL",
+        "broken": "20,853",
+        "guarded": "15,448",
+        "unit": "ticks"
+      },
+      {
+        "label": "inventory dispersion",
+        "broken": "88.1",
+        "guarded": "12.0",
+        "unit": "inventory SD"
+      }
+    ],
+    "timeline": [
+      {
+        "phase": "trigger",
+        "title": "Sort on one number",
+        "detail": "Mean PnL places the naive strategy above the inventory-aware alternative.",
+        "state": "neutral"
+      },
+      {
+        "phase": "propagate",
+        "title": "Hide carried inventory",
+        "detail": "A favorable terminal drift enters PnL as if it were repeatable quoting edge.",
+        "state": "fail"
+      },
+      {
+        "phase": "witness",
+        "title": "Decompose every tick",
+        "detail": "The ledger separates 16,238 spread capture from 4,615 inventory PnL.",
+        "state": "inspect"
+      },
+      {
+        "phase": "boundary",
+        "title": "Keep risk beside reward",
+        "detail": "The result remains visible, but it can no longer masquerade as a free improvement.",
+        "state": "pass"
+      }
+    ],
+    "limits": [
+      "The fill model has no queue position, partial-fill priority, exchange latency, or observable production fair value."
+    ],
+    "tags": [
+      "market-making",
+      "inventory",
+      "pnl-decomposition",
+      "risk"
+    ]
+  },
+  "verification": {
+    "commandId": "inventory-test",
+    "command": ".venv/bin/pytest -q tests/test_sim.py::test_inventory_skew_holds_less_risk_than_naive",
+    "expected": "1 passed",
+    "observed": "1 test passed",
+    "test": "https://github.com/asp53826/lob-market-making/blob/82c75a1fd7824dd96bdb92432b58b3557cb7d577/tests/test_sim.py#L92-L96",
+    "benchmark": "https://github.com/asp53826/lob-market-making/blob/82c75a1fd7824dd96bdb92432b58b3557cb7d577/README.md#L52-L72"
+  },
+  "integrity": {
+    "capsuleSha256": "647dcc6b7dd1f9b3bf4b2c3c413ba09abae1b98f8271922e4e9397c5e230f22c",
+    "releaseBundle": "counterexample-v1.0.0-receipts.tar.gz",
+    "verifyReceipt": "node bin/counterexample.mjs verify receipts/lob-profit-hides-risk.receipt.json",
+    "verifyAttestation": "gh attestation verify counterexample-v1.0.0-receipts.tar.gz --repo asp53826/counterexample"
+  },
+  "receiptSha256": "fa02f77611c71febb1d064c94e534db375104fd8998a39e5aee6d78d0d6e0cba"
+}

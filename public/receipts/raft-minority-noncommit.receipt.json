@@ -1,0 +1,115 @@
+{
+  "format": "counterexample-receipt/v1",
+  "issuedAt": "2026-08-10T00:00:00Z",
+  "issuer": {
+    "name": "COUNTEREXAMPLE",
+    "repository": "asp53826/counterexample",
+    "release": "v1.0.0"
+  },
+  "subject": {
+    "id": "raft-minority-noncommit",
+    "caseNumber": "CX-001",
+    "title": "A leader accepts a write it cannot commit",
+    "repository": "asp53826/raft-mvcc",
+    "commit": "a5dd0986756b26ff5f375b73d03d618d9b2aded0"
+  },
+  "capsule": {
+    "$schema": "../schemas/counterexample.schema.json",
+    "schemaVersion": 1,
+    "id": "raft-minority-noncommit",
+    "caseNumber": "CX-001",
+    "title": "A leader accepts a write it cannot commit",
+    "system": "Raft + MVCC",
+    "engine": "raft-mvcc",
+    "commit": "a5dd0986756b26ff5f375b73d03d618d9b2aded0",
+    "disposition": "guarded",
+    "severity": "critical",
+    "verifiedAt": "2026-08-10",
+    "faultKind": "partition",
+    "invariantId": "majority-before-commit",
+    "summary": "An isolated Raft leader can append a proposal locally, but proposal acceptance is not commit evidence and the state machine must remain unchanged without a majority.",
+    "trigger": "Elect node 1, isolate it from nodes 2 and 3, then propose an unsafe write on the old leader.",
+    "observed": "The proposal is appended locally while the commit index remains fixed and the MVCC store never exposes the value.",
+    "invariant": "No command may become committed or visible until an entry from the leader's current term is replicated to a majority.",
+    "fix": "Treat proposal acceptance as local admission only; advance commit and apply state strictly after majority acknowledgement.",
+    "verification": {
+      "commandId": "native-test",
+      "testPath": "tests/test_raft_mvcc.cpp",
+      "testLines": [
+        191,
+        210
+      ],
+      "result": "All 598 assertions passed"
+    },
+    "metrics": [
+      {
+        "label": "local append",
+        "broken": "accepted",
+        "guarded": "uncommitted",
+        "unit": "state"
+      },
+      {
+        "label": "commit advance",
+        "broken": "requested",
+        "guarded": "0",
+        "unit": "entries"
+      }
+    ],
+    "timeline": [
+      {
+        "phase": "trigger",
+        "title": "Cut the leader away",
+        "detail": "Node 1 retains its old leadership state while every transport edge to the majority is removed.",
+        "state": "neutral"
+      },
+      {
+        "phase": "propagate",
+        "title": "Append without quorum",
+        "detail": "The write enters node 1's private log; no majority acknowledgement exists.",
+        "state": "fail"
+      },
+      {
+        "phase": "witness",
+        "title": "Commit index does not move",
+        "detail": "The test records the pre-partition index and proves it is unchanged after delivery.",
+        "state": "inspect"
+      },
+      {
+        "phase": "guard",
+        "title": "State machine stays clean",
+        "detail": "A timestamped read returns no unsafe value; the majority elects a different leader and commits safely.",
+        "state": "pass"
+      },
+      {
+        "phase": "receipt",
+        "title": "Bind the evidence",
+        "detail": "Receipt binds the exact commit, test lines, command identifier, and expected assertion total.",
+        "state": "pass"
+      }
+    ],
+    "limits": [
+      "The deterministic transport models exact partitions, not TCP timeouts, kernel scheduling, or fsync latency."
+    ],
+    "tags": [
+      "raft",
+      "partition",
+      "commit-safety",
+      "distributed-systems"
+    ]
+  },
+  "verification": {
+    "commandId": "native-test",
+    "command": "make clean test",
+    "expected": "All 598 assertions passed",
+    "observed": "All 598 assertions passed",
+    "test": "https://github.com/asp53826/raft-mvcc/blob/a5dd0986756b26ff5f375b73d03d618d9b2aded0/tests/test_raft_mvcc.cpp#L191-L210",
+    "benchmark": null
+  },
+  "integrity": {
+    "capsuleSha256": "2829e077fb4da653a757817ce45604061befc950e576795283ca767be5469501",
+    "releaseBundle": "counterexample-v1.0.0-receipts.tar.gz",
+    "verifyReceipt": "node bin/counterexample.mjs verify receipts/raft-minority-noncommit.receipt.json",
+    "verifyAttestation": "gh attestation verify counterexample-v1.0.0-receipts.tar.gz --repo asp53826/counterexample"
+  },
+  "receiptSha256": "57c9cc96b82129672391606b85b45a8b3cdd9f32588a3df22bb841fd78890313"
+}

@@ -1,0 +1,108 @@
+{
+  "format": "counterexample-receipt/v1",
+  "issuedAt": "2026-08-10T00:00:00Z",
+  "issuer": {
+    "name": "COUNTEREXAMPLE",
+    "repository": "asp53826/counterexample",
+    "release": "v1.0.0"
+  },
+  "subject": {
+    "id": "clutter-confirms-ghosts",
+    "caseNumber": "CX-005",
+    "title": "Pure clutter promotes 165 ghost tracks",
+    "repository": "asp53826/track-fusion",
+    "commit": "9a1092b8da88f5904ca190a393d77bd2bcd111b8"
+  },
+  "capsule": {
+    "$schema": "../schemas/counterexample.schema.json",
+    "schemaVersion": 1,
+    "id": "clutter-confirms-ghosts",
+    "caseNumber": "CX-005",
+    "title": "Pure clutter promotes 165 ghost tracks",
+    "system": "Track management",
+    "engine": "track-fusion",
+    "commit": "9a1092b8da88f5904ca190a393d77bd2bcd111b8",
+    "disposition": "repaired",
+    "severity": "high",
+    "verifiedAt": "2026-08-10",
+    "faultKind": "clutter-birth",
+    "invariantId": "clutter-cannot-confirm-track",
+    "summary": "A conventional M-of-N hit counter promotes tracks in a scene containing no targets because new-track covariance creates a gate large enough to consume random clutter.",
+    "trigger": "Run 40 scans with zero targets and six false alarms per scan while confirming any tentative track that accumulates M hits in N scans.",
+    "observed": "The historical implementation confirmed 165 tracks from pure clutter while producing plausible-looking trajectories.",
+    "invariant": "Confirmation evidence must distinguish a concentrated target likelihood from an enormous gate that merely contains something.",
+    "fix": "Replace hit counting with a Wald sequential test over a target-present versus clutter likelihood ratio.",
+    "verification": {
+      "commandId": "python-test",
+      "testPath": "tf/track.py",
+      "testLines": [
+        74,
+        101
+      ],
+      "result": "67 tests passed",
+      "benchmarkPath": "README.md",
+      "benchmarkLines": [
+        188,
+        208
+      ]
+    },
+    "metrics": [
+      {
+        "label": "false confirmations",
+        "broken": "165",
+        "guarded": "LLR-gated",
+        "unit": "tracks"
+      }
+    ],
+    "timeline": [
+      {
+        "phase": "trigger",
+        "title": "Remove every real target",
+        "detail": "Only a Poisson-like field of six false alarms per scan remains.",
+        "state": "neutral"
+      },
+      {
+        "phase": "propagate",
+        "title": "Let covariance inflate the gate",
+        "detail": "Unknown velocity makes each tentative track accept almost any nearby clutter return.",
+        "state": "fail"
+      },
+      {
+        "phase": "witness",
+        "title": "Count the ghosts",
+        "detail": "One hundred sixty-five false tracks reach confirmation in forty scans.",
+        "state": "inspect"
+      },
+      {
+        "phase": "guard",
+        "title": "Score evidence quality",
+        "detail": "The Wald score charges misses and rewards only concentrated likelihood under the target model.",
+        "state": "pass"
+      }
+    ],
+    "limits": [
+      "The clutter process and detection model are simulated; real sensor artifacts require a calibrated likelihood model."
+    ],
+    "tags": [
+      "tracking",
+      "clutter",
+      "wald-test",
+      "historical-bug"
+    ]
+  },
+  "verification": {
+    "commandId": "python-test",
+    "command": "PYTHONPATH=. .venv/bin/pytest -q tests",
+    "expected": "67 passed",
+    "observed": "67 tests passed",
+    "test": "https://github.com/asp53826/track-fusion/blob/9a1092b8da88f5904ca190a393d77bd2bcd111b8/tf/track.py#L74-L101",
+    "benchmark": "https://github.com/asp53826/track-fusion/blob/9a1092b8da88f5904ca190a393d77bd2bcd111b8/README.md#L188-L208"
+  },
+  "integrity": {
+    "capsuleSha256": "d3592fee257c6be78fd50abee00ae0269f9cdde4623ae2a54dbeb2f2bab3d305",
+    "releaseBundle": "counterexample-v1.0.0-receipts.tar.gz",
+    "verifyReceipt": "node bin/counterexample.mjs verify receipts/clutter-confirms-ghosts.receipt.json",
+    "verifyAttestation": "gh attestation verify counterexample-v1.0.0-receipts.tar.gz --repo asp53826/counterexample"
+  },
+  "receiptSha256": "762231d01fdd53b48b8b958f22cc06b03476b5f3997246a6aa84168eaf29038d"
+}

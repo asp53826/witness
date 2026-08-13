@@ -1,0 +1,103 @@
+{
+  "format": "counterexample-receipt/v1",
+  "issuedAt": "2026-08-10T00:00:00Z",
+  "issuer": {
+    "name": "COUNTEREXAMPLE",
+    "repository": "asp53826/counterexample",
+    "release": "v1.0.0"
+  },
+  "subject": {
+    "id": "tensor-shape-mismatch",
+    "caseNumber": "CX-009",
+    "title": "An invalid matrix reaches the compiler front door",
+    "repository": "asp53826/tensorforge-webgpu",
+    "commit": "70a5c855ef35e01a29ba351eb2645670060b9f0b"
+  },
+  "capsule": {
+    "$schema": "../schemas/counterexample.schema.json",
+    "schemaVersion": 1,
+    "id": "tensor-shape-mismatch",
+    "caseNumber": "CX-009",
+    "title": "An invalid matrix reaches the compiler front door",
+    "system": "Tensor compiler",
+    "engine": "tensorforge-webgpu",
+    "commit": "70a5c855ef35e01a29ba351eb2645670060b9f0b",
+    "disposition": "guarded",
+    "severity": "critical",
+    "verifiedAt": "2026-08-10",
+    "faultKind": "shape-error",
+    "invariantId": "matmul-inner-dimensions-match",
+    "summary": "A graph mutates one weight to an incompatible inner dimension. Lowering it without validation would generate a GPU dispatch whose storage interpretation is invalid.",
+    "trigger": "Change weight1 to shape [127, hidden] while its activation input retains a different contracting dimension.",
+    "observed": "The typed frontend stops compilation with a precise 'cannot multiply' error before fusion, allocation, WGSL generation, or GPU execution.",
+    "invariant": "Every matrix multiply must have rank two inputs with equal contracting dimensions before any optimizing rewrite runs.",
+    "fix": "Validate and infer shapes on a cloned graph before canonicalization; reject non-positive dimensions and incompatible matrices.",
+    "verification": {
+      "commandId": "compiler-test",
+      "testPath": "src/test/compiler.test.ts",
+      "testLines": [
+        40,
+        45
+      ],
+      "result": "9 tests passed"
+    },
+    "metrics": [
+      {
+        "label": "GPU dispatches emitted",
+        "broken": "unsafe",
+        "guarded": "0",
+        "unit": "dispatches"
+      }
+    ],
+    "timeline": [
+      {
+        "phase": "trigger",
+        "title": "Mutate the weight rank",
+        "detail": "The graph remains syntactically valid while its matrix contract becomes impossible.",
+        "state": "neutral"
+      },
+      {
+        "phase": "propagate",
+        "title": "Approach code generation",
+        "detail": "Unchecked dimensions would poison byte counts, allocation, and generated WGSL bounds.",
+        "state": "fail"
+      },
+      {
+        "phase": "witness",
+        "title": "Name both shapes",
+        "detail": "The frontend reports the exact left and right dimensions that cannot contract.",
+        "state": "inspect"
+      },
+      {
+        "phase": "guard",
+        "title": "Reject before optimization",
+        "detail": "No fusion, allocation, or WebGPU work occurs after the failed invariant.",
+        "state": "pass"
+      }
+    ],
+    "limits": [
+      "The IR currently models static f32 tensor shapes; symbolic dimensions and mixed precision are outside scope."
+    ],
+    "tags": [
+      "compiler",
+      "webgpu",
+      "shape-inference",
+      "type-safety"
+    ]
+  },
+  "verification": {
+    "commandId": "compiler-test",
+    "command": "npm test -- --run",
+    "expected": "9 passed",
+    "observed": "9 tests passed",
+    "test": "https://github.com/asp53826/tensorforge-webgpu/blob/70a5c855ef35e01a29ba351eb2645670060b9f0b/src/test/compiler.test.ts#L40-L45",
+    "benchmark": null
+  },
+  "integrity": {
+    "capsuleSha256": "e789be026931a860a4def0141525a94c302e9ca7758550b953c64c01384477e9",
+    "releaseBundle": "counterexample-v1.0.0-receipts.tar.gz",
+    "verifyReceipt": "node bin/counterexample.mjs verify receipts/tensor-shape-mismatch.receipt.json",
+    "verifyAttestation": "gh attestation verify counterexample-v1.0.0-receipts.tar.gz --repo asp53826/counterexample"
+  },
+  "receiptSha256": "37576d77588845f3023d2debcb397f53eacfb91cdca94250f1013c1f778eefa6"
+}

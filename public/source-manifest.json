@@ -1,0 +1,33 @@
+{
+  "format": "witness-source-manifest/v1",
+  "generatedAt": "2026-08-13T00:00:00Z",
+  "subjects": [
+    {
+      "repository": "asp53826/raft-mvcc",
+      "commit": "a5dd0986756b26ff5f375b73d03d618d9b2aded0",
+      "artifacts": {
+        "wasm/faultline-engine.mjs": "327f548d3c6d6d2fa3ee41b0dd81f8bd607cae69dac59ec667c2a23affd1239b",
+        "wasm/faultline-engine.wasm": "ceb72a6c781750c52ab0e03c44797e76175e83d9e9b8c51057549d05859ec5f6"
+      }
+    },
+    {
+      "repository": "asp53826/tensorforge-webgpu",
+      "commit": "70a5c855ef35e01a29ba351eb2645670060b9f0b",
+      "artifacts": {
+        "compiler/compiler.ts": "a63f6cf1a4e627ebaa62239713625ba02ad61dbc159f3a1c91eeea2467146709",
+        "compiler/models.ts": "65d305fc2375c83498a0d72553829dc9c22099d56aac4b42c6c406ceb652896c",
+        "compiler/types.ts": "d19b194480d9b3a776f1cda25ab3dd4991b54a3132ab065681e714d45e36356e"
+      }
+    },
+    {
+      "repository": "asp53826/track-fusion",
+      "commit": "9a1092b8da88f5904ca190a393d77bd2bcd111b8",
+      "sourceTreeSha256": "b34897ef90338004e8400fcc0ac7453132d1f0726c2c51a253ea9b11c2f84aa3"
+    },
+    {
+      "repository": "asp53826/lob-market-making",
+      "commit": "82c75a1fd7824dd96bdb92432b58b3557cb7d577",
+      "sourceTreeSha256": "c4654af97515fdf38d1a85ce19d9b488a7f237506201dfa4090e65fecc29fa01"
+    }
+  ]
+}
